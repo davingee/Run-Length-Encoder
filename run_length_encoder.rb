@@ -34,20 +34,6 @@ class RunLengthEncoder
 
 end
 
-# test = 'zzzzzzzzzzzzzzzzzzzzz          wwwwwwwwwwwaaabbbbbbbbcdeeeeeeeeeeefff11111222333'
-# # puts test
-# 
-# encoded = RunLengthEncoder.new(test).encode
-# puts ("encoded sequence = #{encoded}")
-# 
-# decoded = RunLengthEncoder.new(encoded).decode
-# puts ("decoded sequence = #{decoded}")
-# 
-# puts "compression ratio #{(1 - encoded.length / decoded.length.to_f) * 100}%"
-
-# RunLengthEncoder.new.encode
-# "mississippi".split( // ).sort.join.gsub(/(.)\1{2,}/) { |s| s.length.to_s + s[0,1] }
-
 # run_length_encoder.rb -e 'zzzzzzzzzzzzzzzzzzzzz          wwwwwwwwwwwaaabbbbbbbbcdeeeeeeeeeeefff11111222333'
 if ARGV[0] == '-e' 
   encoded = RunLengthEncoder.new(ARGV[1]).encode

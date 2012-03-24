@@ -1,0 +1,5 @@
+Encode:
+ruby run_length_encoder.rb -e 'zzzzzzzzzzzzzzzzzzzzz          wwwwwwwwwwwaaabbbbbbbbcdeeeeeeeeeeefff11111222333'
+
+Decode:
+ruby run_length_encoder.rb -d '21_z10_ 11_w3_a8_b1_c1_d11_e3_f5_13_23_3'
