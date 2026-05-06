@@ -1,49 +1,52 @@
 #!/usr/bin/env ruby
 
 class RunLengthEncoder
+  def initialize(string = "")
+    @data = string.to_s
+  end
 
-   def initialize(string)
-     @data = string
-   end
+  def self.encode(string)
+    new(string).encode
+  end
 
-   def encode
-     result = ''
-     count = 0
-     last_char = nil
-     @data.split(//).each do |char|
-       last_char ||= char
-       if last_char == char
-         count += 1
-       else
-         result << "#{count}_#{last_char}"
-         last_char = char
-         count = 1
-       end
-     end
-     result << "#{count}_#{last_char}"
-     result
-   end
+  def self.decode(string)
+    new(string).decode
+  end
 
-   def decode
-     result = ''
-     @data.scan(/(\d+_)(\w{1}|\s)/).each do |count, character|
-       result << character * count.gsub("_", "").to_i
-     end
-     result
-   end
+  def encode
+    return "" if @data.empty?
 
+    @data.each_char
+         .slice_when { |prev, curr| prev != curr }
+         .map { |group| "#{group.size}_#{group.first}" }
+         .join
+  end
+
+  def decode
+    return "" if @data.empty?
+
+    @data.scan(/(\d+)_(.)/m).each_with_object("") do |(count, char), result|
+      result << char * count.to_i
+    end
+  end
 end
 
-# run_length_encoder.rb -e 'zzzzzzzzzzzzzzzzzzzzz          wwwwwwwwwwwaaabbbbbbbbcdeeeeeeeeeeefff11111222333'
-if ARGV[0] == '-e' 
-  encoded = RunLengthEncoder.new(ARGV[1]).encode
-  puts ("encoded sequence = #{encoded}")
-  puts "compression ratio #{(1 - encoded.length / ARGV[1].length.to_f) * 100}%"
+if __FILE__ == $0
+  case ARGV[0]
+  when "-e", "--encode"
+    input = ARGV[1].to_s
+    encoded = RunLengthEncoder.new(input).encode
+    puts encoded
+    ratio = input.empty? ? 0 : (1 - encoded.length / input.length.to_f) * 100
+    warn "compression ratio #{format('%.2f', ratio)}%"
+  when "-d", "--decode"
+    puts RunLengthEncoder.new(ARGV[1]).decode
+  else
+    warn <<~USAGE
+      Usage: #{File.basename($PROGRAM_NAME)} -e <string> | -d <encoded_string>
+        -e, --encode    Encode the given string
+        -d, --decode    Decode the given encoded string
+    USAGE
+    exit 1
+  end
 end
-
-# run_length_encoder.rb -d 6_a5_b4_c
-if ARGV[0] == '-d'
-  decoded = RunLengthEncoder.new(ARGV[1]).decode
-  puts ("decoded sequence = #{decoded}")
-end
-
